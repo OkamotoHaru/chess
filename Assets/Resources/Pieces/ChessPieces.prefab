@@ -1,0 +1,67 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &100100000
+Prefab:
+  m_ObjectHideFlags: 1
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications: []
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 0}
+  m_RootGameObject: {fileID: 1114728769474428}
+  m_IsPrefabParent: 1
+--- !u!1 &1114728769474428
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4688735432052778}
+  - component: {fileID: 114142284371339028}
+  m_Layer: 0
+  m_Name: ChessPieces
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4688735432052778
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1114728769474428}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &114142284371339028
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1114728769474428}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 675e2322f4f6ba0428a1fe9b4b3b87cd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  BlackPieces:
+  - {fileID: 1179964198746614, guid: 5015070b96100fd468aa79737b9838e7, type: 2}
+  - {fileID: 1036440247432846, guid: a37e8ae50b785ab4bbc00023b14d1f26, type: 2}
+  - {fileID: 1438713918959504, guid: 5a408f07b7824b144ab6bccfb5b55771, type: 2}
+  - {fileID: 1475693946784926, guid: 48984b830a071bd40ad7a3e0126d4aaf, type: 2}
+  - {fileID: 1531157600677300, guid: 9689033b5eda02646ad219e53a7a16bc, type: 2}
+  - {fileID: 1808200230802508, guid: 545d62335e1aa314fb7bd661eadc29ab, type: 2}
+  WhitePieces:
+  - {fileID: 1084714414082726, guid: 22fb8dd0906c35340afb123865b26477, type: 2}
+  - {fileID: 1263704439306230, guid: ac46678e1ffc6034aa6976fb9360e8f7, type: 2}
+  - {fileID: 1257046958853378, guid: 65c0812c3873be246adc4b6405383eda, type: 2}
+  - {fileID: 1766163397618620, guid: 5fe7e417e9eec2140a9d328f8aab3cfb, type: 2}
+  - {fileID: 1443602996088774, guid: 2975f6fbf2e9c674bb19428934c2c6cd, type: 2}
+  - {fileID: 1087582586989628, guid: 581a0f12c6fa5864db3b812fd6849027, type: 2}
