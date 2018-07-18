@@ -37,6 +37,12 @@ public class ChessPieces : MonoBehaviour
 		SELECT,	//ポーン昇格時の選択用
 		END
 	}
+	//効果音
+	enum SOUND
+	{
+		PUT,
+		END
+	}
 	//駒
 	float PIECE_POS_Y_SELECTING = 5.0f;
 	//色
@@ -47,6 +53,7 @@ public class ChessPieces : MonoBehaviour
 	//----------PUBLIC----------
 	public GameObject[] BlackPieces;
 	public GameObject[] WhitePieces;
+	public AudioClip[] sounds;
 	//----------PRIVATE----------
 	//管理系
 	int procNo = 0;
@@ -74,6 +81,8 @@ public class ChessPieces : MonoBehaviour
 	int nextPosX;		//移動先フィールド座標
 	int nextPosY;		//移動先フィールド座標
 	Collider pieceCollider;	//コライダー
+	//効果音
+	AudioSource audioSource;
 	//********************************************************************************
 	//public static function
 	//********************************************************************************
@@ -412,6 +421,10 @@ public class ChessPieces : MonoBehaviour
 				//フィールド座標設定
 				fieldPosX = nextPosX;
 				fieldPosY = nextPosY;
+				//効果音
+				audioSource = gameObject.AddComponent<AudioSource>();
+				audioSource.clip = sounds[(int)SOUND.PUT];
+				audioSource.PlayOneShot( sounds[(int)SOUND.PUT] );
 				//移動フラグtrue
 				moved = true;
 				//初回移動フラグtrue

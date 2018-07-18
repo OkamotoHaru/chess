@@ -65,3 +65,5 @@ MonoBehaviour:
   - {fileID: 1766163397618620, guid: 5fe7e417e9eec2140a9d328f8aab3cfb, type: 2}
   - {fileID: 1443602996088774, guid: 2975f6fbf2e9c674bb19428934c2c6cd, type: 2}
   - {fileID: 1087582586989628, guid: 581a0f12c6fa5864db3b812fd6849027, type: 2}
+  sounds:
+  - {fileID: 8300000, guid: 89f8914e49b855b49916eb2e5c740af2, type: 3}
