@@ -37,6 +37,10 @@ public class Title : MonoBehaviour
 	DebugMng debugMng = null;
 	//ボタン
 	GameObject button;
+	//デバッグ
+#if DEBUG_MODE
+	int[] touchphaseNum_debug = new int[(int)TouchPhase.Canceled];
+#endif
 	//********************************************************************************
 	//public static function
 	//********************************************************************************
@@ -71,6 +75,8 @@ public class Title : MonoBehaviour
 	//起動直後１度のみ通る
 	void Awake()
 	{
+		//画面右向き固定
+		Screen.orientation = ScreenOrientation.LandscapeLeft;
 	}
 	//起動後初回のみ通る
 	void Start ()
@@ -85,6 +91,60 @@ public class Title : MonoBehaviour
 	{
 #if DEBUG_MODE
 		//DebugMng.ScreenLog("procNo: " + procNo);
+		DebugMng.ScreenLog( "mousePos: " + UtilityMng.GetTouchPosition() );
+		//
+		DebugMng.ScreenLog( "collider2d_debug: " + UtilityMng.collider2d_debug );
+		//
+		DebugMng.ScreenLog( "ray_debug: " + UtilityMng.ray_debug );
+		//
+		string mess = "";
+		for (int i=0; i< UtilityMng.flag_debug.Length; i++)
+		{
+			mess += UtilityMng.flag_debug[i] + ", ";
+		}
+		DebugMng.ScreenLog( "flag_debug: " + mess );
+		//
+		mess = "";
+		for (int i = 0; i < UtilityMng.touchInfoNum_debug.Length; i++)
+		{
+			mess += (UtilityMng.TouchInfo)i + "(" + UtilityMng.touchInfoNum_debug[i] + "), ";
+		}
+		DebugMng.ScreenLog( "touch info Num: " + mess );
+		//
+		if (Application.isMobilePlatform)
+		{
+			if (Input.touchCount > 0)
+			{
+				TouchPhase touchPhase = Input.GetTouch( 0 ).phase;
+				switch (touchPhase)
+				{
+					case TouchPhase.Began:
+						touchphaseNum_debug[(int)TouchPhase.Began]++;
+						break;
+					case TouchPhase.Moved:
+						touchphaseNum_debug[(int)TouchPhase.Moved]++;
+						break;
+					case TouchPhase.Stationary:
+						touchphaseNum_debug[(int)TouchPhase.Stationary]++;
+						break;
+					case TouchPhase.Ended:
+						touchphaseNum_debug[(int)TouchPhase.Ended]++;
+						break;
+					case TouchPhase.Canceled:
+						touchphaseNum_debug[(int)TouchPhase.Canceled]++;
+						break;
+					default:
+						break;
+				}
+			}
+		}
+		//
+		mess = "";
+		for (int i = 0; i < touchphaseNum_debug.Length; i++)
+		{
+			mess += (TouchPhase)i + "(" + touchphaseNum_debug[i] + "), ";
+		}
+		DebugMng.ScreenLog( "touch phase Num: " + mess );
 #endif
 		switch ( procNo )
 		{

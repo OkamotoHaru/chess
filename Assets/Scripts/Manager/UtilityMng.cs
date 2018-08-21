@@ -1,5 +1,5 @@
 ﻿#if UNITY_DEBUG
-	//#define DEBUG_MODE
+	#define DEBUG_MODE
 #endif
 
 using System.Collections;
@@ -27,6 +27,7 @@ public class UtilityMng : MonoBehaviour
 		STATIONARY,	//静止
 		ENDED,		//タッチ終了
 		CANCELED,	//タッチキャンセル
+		MAX
 	}
 	//----------CLASS----------
 	//----------PUBLIC STATIC----------
@@ -39,6 +40,17 @@ public class UtilityMng : MonoBehaviour
 	//タイマー
 	float purposeFrame = 0.0f;
 	float nowFrame = 0.0f;
+	//PC用タッチ判定
+	private static TouchInfo touchInfo = TouchInfo.NONE;
+	private static Vector3 touchPos2;
+	private static readonly float MOVE_JUDGE_DIS2 = 0.00f;
+	//デバッグ用
+#if DEBUG_MODE
+	public static Vector2 ray_debug;
+	public static Collider2D collider2d_debug;
+	public static bool[] flag_debug = new bool[7];
+	public static int[] touchInfoNum_debug = new int[(int)TouchInfo.MAX];
+#endif
 	//********************************************************************************
 	//public static function
 	//********************************************************************************
@@ -82,21 +94,54 @@ public class UtilityMng : MonoBehaviour
 		{
 			if (Input.touchCount > 0)
 			{
-				return (TouchInfo)((int)Input.GetTouch( 0 ).phase);
+				touchInfo = (TouchInfo)((int)Input.GetTouch( 0 ).phase + 1);
+#if DEBUG_MODE
+				touchInfoNum_debug[(int)touchInfo]++;
+#endif
+				return (TouchInfo)((int)Input.GetTouch( 0 ).phase + 1);
 			}
 		}
 		else
 		{
 			if (Input.GetMouseButtonDown( 0 ))
 			{
+#if DEBUG_MODE
+				if (touchInfo != TouchInfo.BEGAN)
+				{
+					touchInfoNum_debug[(int)TouchInfo.BEGAN]++;
+				}
+#endif
+				touchInfo = TouchInfo.BEGAN;
 				return TouchInfo.BEGAN;
 			}
 			if (Input.GetMouseButton( 0 ))
 			{
+				float dis = Vector3.Distance( touchPos2, Input.mousePosition );
+				if ( touchInfo == TouchInfo.MOVED ||
+					(dis == MOVE_JUDGE_DIS2 && touchInfo == TouchInfo.STATIONARY) )
+				{
+#if DEBUG_MODE
+					touchInfoNum_debug[(int)TouchInfo.STATIONARY]++;
+#endif
+					touchInfo = TouchInfo.STATIONARY;
+					return TouchInfo.STATIONARY;
+				}
+#if DEBUG_MODE
+				touchInfoNum_debug[(int)TouchInfo.MOVED]++;
+#endif
+				touchInfo = TouchInfo.MOVED;
+				touchPos2 = Input.mousePosition;
 				return TouchInfo.MOVED;
 			}
 			if (Input.GetMouseButtonUp( 0 ))
 			{
+#if DEBUG_MODE
+				if (touchInfo != TouchInfo.ENDED)
+				{
+					touchInfoNum_debug[(int)TouchInfo.ENDED]++;
+				}
+#endif
+				touchInfo = TouchInfo.ENDED;
 				return TouchInfo.ENDED;
 			}
 		}
@@ -108,6 +153,7 @@ public class UtilityMng : MonoBehaviour
 		TouchInfo info = IsTouch();
 		if ( info == TouchInfo.ENDED )
 		{
+			touchInfo = TouchInfo.NONE;
 			return true;
 		}
 		return false;
@@ -143,7 +189,7 @@ public class UtilityMng : MonoBehaviour
 				if (hit.collider.gameObject == judgeObj)
 				{
 #if DEBUG_MODE
-					DebugMng.Log( "touch: " + hit.collider.gameObject.name );
+					//DebugMng.Log( "touch: " + hit.collider.gameObject.name );
 #endif
 					//判定するオブジェクト設定
 					if (touchJudgeObj == null)
@@ -219,6 +265,7 @@ public class UtilityMng : MonoBehaviour
 		{
 			return false;
 		}
+		touchInfo = TouchInfo.NONE;
 		touchJudgeObj = null;
 		return true;
 	}
@@ -250,17 +297,28 @@ public class UtilityMng : MonoBehaviour
 		//トリガー設定しているものはray判定しない
 		Physics.queriesHitTriggers = false;
 		Collider2D collider2d = Physics2D.OverlapPoint( ray );
+#if DEBUG_MODE
+		flag_debug[0] = true;
+		ray_debug = ray;
+		collider2d_debug = collider2d;
+#endif
 		//コライダーがなければ
 		if ( collider2d == null )
 		{
 			return false;
 		}
+#if DEBUG_MODE
+		flag_debug[1] = true;
+#endif
 		// オブジェクトにrayが当たってないなら
 		RaycastHit2D hit = Physics2D.Raycast( ray, -Vector2.up, dis );  //ray情報
 		if ( !hit )
 		{
 			return false;
 		}
+#if DEBUG_MODE
+		flag_debug[2] = true;
+#endif
 		//判定開始する時のobjを設定
 		if (touchInfo == TouchInfo.BEGAN)
 		{
@@ -270,24 +328,37 @@ public class UtilityMng : MonoBehaviour
 			}
 			return false;
 		}
+#if DEBUG_MODE
+		flag_debug[3] = true;
+#endif
 		//タッチ離したとき以外なら
 		if (touchInfo != TouchInfo.ENDED)
 		{
 			return false;
 		}
+#if DEBUG_MODE
+		flag_debug[4] = true;
+#endif
 		//保存したオブジェクトとタッチ開始時のオブジェクトが異なるなら
 		if (touchJudgeObj != hit.collider.gameObject)
 		{
 			touchJudgeObj = null;
 			return false;
 		}
+#if DEBUG_MODE
+		flag_debug[5] = true;
+#endif
 		//オブジェクトが保存済のものと異なるなら
 		if (hit.collider.gameObject != judgeObj)
 		{
 			return false;
 		}
+#if DEBUG_MODE
+		flag_debug[6] = true;
+		DebugMng.Log( "hit name: " + hit.collider.gameObject.name );
+#endif
+		touchInfo = TouchInfo.NONE;
 		touchJudgeObj = null;
-		DebugMng.Log("hit name: " + hit.collider.gameObject .name);
 		return true;
 	}
 	//----------SET----------
@@ -487,8 +558,8 @@ public class UtilityMng : MonoBehaviour
 	{
 #if DEBUG_MODE
 		//DebugMng.ScreenLog("UtilityMng procNo: " + procNo);
-		DebugMng.ScreenLog("UtilityMng nowFrame: " + nowFrame);
-		DebugMng.ScreenLog("UtilityMng purposeFrame: " + purposeFrame);
+		//DebugMng.ScreenLog("UtilityMng nowFrame: " + nowFrame);
+		//DebugMng.ScreenLog("UtilityMng purposeFrame: " + purposeFrame);
 #endif
 		switch ( mode )
 		{
@@ -527,6 +598,7 @@ public class UtilityMng : MonoBehaviour
 				procNo = 100;
 #endif
 #if DEBUG_MODE
+#if skip
 				if ( procNo == 100 )
 				{
 					Debug.Log("タイマー：初期化完了(deltaTime)");
@@ -535,6 +607,7 @@ public class UtilityMng : MonoBehaviour
 				{
 					Debug.Log("タイマー：初期化完了(fixedDeltaTime)");
 				}
+#endif
 #endif
 				break;
 			//物理なしフレーム加算
@@ -545,7 +618,7 @@ public class UtilityMng : MonoBehaviour
 					break;
 				}
 #if DEBUG_MODE
-				Debug.Log("タイマー：終了");
+				//Debug.Log("タイマー：終了");
 #endif
 				procNo = 99999;
 				break;
